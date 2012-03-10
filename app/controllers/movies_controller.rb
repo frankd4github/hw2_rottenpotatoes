@@ -8,14 +8,32 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    @sort = params['sort']
+    redirect = false
+    if params.has_key?('sort')
+      @sort = session['sort'] = params['sort']
+    else
+      @sort = params['sort'] = session['sort']
+      redirect = true
+    end
     @class_title_header = 'hilite' if @sort=='title'
     @class_release_date_header = 'hilite' if @sort=='release_date'
-    if ( params.has_key?('ratings')) then
-      @ratings = params['ratings']
+    if params.has_key?('ratings')
+      @ratings = session['ratings'] = params['ratings']
+    elsif session.has_key?('ratings')
+      @ratings = params['ratings'] = session['ratings']
+      redirect = true
     else
       @ratings = Hash.new
       @all_ratings.each {|elt| @ratings[elt] = 1}
+      session['ratings'] = params['ratings'] = @ratings
+      redirect = false
+    end
+    if redirect
+      ratings_in_path = @ratings.keys.map {|rating| "ratings[#{rating}]=1"}.join('&')
+      redirect_to "/movies?sort=#{@sort}&#{ratings_in_path}"
+      #redirect_to movies_path #('sort' => @sort, 'ratings' => @ratings)
+      #redirect_to movies_path #"/movies?sort=#{@sort}"
+      # redirect_to "/movies?sort=#{@sort}&ratings[PG]=1"
     end
     @movies = Movie.find_all_by_rating(@ratings.keys, :order => @sort)
   end
