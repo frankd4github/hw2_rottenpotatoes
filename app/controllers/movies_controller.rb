@@ -10,15 +10,16 @@ class MoviesController < ApplicationController
     #@all_ratings = ['G','PG','PG-13','R']
     @all_ratings = Movie.all_ratings
     @sort = params['sort']
-    @class_title_header = @sort=='title'?'hilite':''
-    @class_release_date_header = @sort=='release_date'?'hilite':''
+    @class_title_header = 'hilite' if @sort=='title'
+    @class_release_date_header = 'hilite' if @sort=='release_date'
     if ( params.has_key?('ratings')) then
-      @ratings = params['ratings'].keys
+      @ratings = params['ratings']
     else
-      @ratings = @all_ratings
+      @ratings = Hash.new
+      @all_ratings.each {|elt| @ratings[elt] = 1}
     end
     #return @movies = Movie.all_by_rating(@ratings, :order => @sort) unless @sort == nil
-    @movies = Movie.find_all_by_rating(@ratings)
+    @movies = Movie.find_all_by_rating(@ratings.keys, :order => @sort)
   end
 
   def new
