@@ -7,7 +7,6 @@ class MoviesController < ApplicationController
   end
 
   def index
-    #@all_ratings = ['G','PG','PG-13','R']
     @all_ratings = Movie.all_ratings
     @sort = params['sort']
     @class_title_header = 'hilite' if @sort=='title'
@@ -18,7 +17,6 @@ class MoviesController < ApplicationController
       @ratings = Hash.new
       @all_ratings.each {|elt| @ratings[elt] = 1}
     end
-    #return @movies = Movie.all_by_rating(@ratings, :order => @sort) unless @sort == nil
     @movies = Movie.find_all_by_rating(@ratings.keys, :order => @sort)
   end
 
