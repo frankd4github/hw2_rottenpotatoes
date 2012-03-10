@@ -28,13 +28,9 @@ class MoviesController < ApplicationController
       session['ratings'] = params['ratings'] = @ratings
       redirect = false
     end
-    if redirect
-      ratings_in_path = @ratings.keys.map {|rating| "ratings[#{rating}]=1"}.join('&')
-      redirect_to "/movies?sort=#{@sort}&#{ratings_in_path}"
-      #redirect_to movies_path #('sort' => @sort, 'ratings' => @ratings)
-      #redirect_to movies_path #"/movies?sort=#{@sort}"
-      # redirect_to "/movies?sort=#{@sort}&ratings[PG]=1"
-    end
+    redirect_to :sort => @sort, :ratings => @ratings if redirect
+    #ratings_in_path = @ratings.keys.map {|rating| "ratings[#{rating}]=1"}.join('&')n
+    #redirect_to "/movies?sort=#{@sort}&#{ratings_in_path}"
     @movies = Movie.find_all_by_rating(@ratings.keys, :order => @sort)
   end
 
