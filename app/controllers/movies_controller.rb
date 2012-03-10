@@ -7,14 +7,12 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = ['G','PG','PG-13','R']
-    if (params['sort'] == 'title')
-      @sort = 'title'
-      return @movies = Movie.all(:order => 'title asc')
-    elsif (params['sort'] == 'release_date')
-      @sort = 'release_date'
-      return @movies = Movie.all(:order => 'release_date asc')
-    end
+    #@all_ratings = ['G','PG','PG-13','R']
+    @all_ratings = Movie.all_ratings
+    @sort = params['sort']
+    @class_title_header = @sort=='title'?'hilite':''
+    @class_release_date_header = @sort=='release_date'?'hilite':''
+    return @movies = Movie.all(:order => @sort) unless @sort == nil
     @movies = Movie.all
   end
 
