@@ -12,8 +12,13 @@ class MoviesController < ApplicationController
     @sort = params['sort']
     @class_title_header = @sort=='title'?'hilite':''
     @class_release_date_header = @sort=='release_date'?'hilite':''
-    return @movies = Movie.all(:order => @sort) unless @sort == nil
-    @movies = Movie.all
+    if ( params.has_key?('ratings')) then
+      @ratings = params['ratings'].keys
+    else
+      @ratings = @all_ratings
+    end
+    #return @movies = Movie.all_by_rating(@ratings, :order => @sort) unless @sort == nil
+    @movies = Movie.find_all_by_rating(@ratings)
   end
 
   def new
